@@ -7,31 +7,9 @@ import questions from "./data";
 function App() {
   const [data, setData] = useState([]);
   const [quizStarted, setQuizStarted] = useState(false);
-
-
-  useEffect(() => {
-    if (!quizStarted) { // Solo ejecuta el efecto si quizStarted es false
-      console.log("buscando");
-      fetch("https://opentdb.com/api.php?amount=10&category=23")
-        .then((response) => response.json())
-        .then((data) => {
-          setData(
-            data.results.map((result) => ({
-              question: result.question,
-              correctAnswer: result.correct_answer,
-              answers: [...result.incorrect_answers, result.correct_answer],
-              selectedAnswer: ""
-            }))
-          );
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }
-  }, [quizStarted]); // Mantiene quizStarted como dependencia
-  //////////////////////////
-
-  //////////////////////////
+  
   return (
-    <div className="App">
+    <div className="quizzical">
       {quizStarted ? (
         <Question 
         data={data}
@@ -44,8 +22,8 @@ function App() {
           setData={setData}
         />
       )}
+      
     </div>
   );
 }
-
 export default App;

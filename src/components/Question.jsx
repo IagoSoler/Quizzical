@@ -1,25 +1,27 @@
-import React, { useMemo, useCallback } from 'react';
+import React from 'react';
 
 
 export const Question = (props) => {
-  const [submitted,setSubmitted] = React.useState(false)
+  const [submitted, setSubmitted] = React.useState(false)
 
   const questions = props.data.map((element, questionIndex) => {
     return (
-      <div key={questionIndex} className='questions'>
+      <div key={questionIndex} className='quizzical--questions'>
         <h3 dangerouslySetInnerHTML={{ __html: element.question }} />
         {element.answers.map((answer, answerIndex) => (
           <button
-            className={`answer--button ${answer === element.selectedAnswer ? "selected" : ""}`}
+            className={`quizzical--answer__button ${answer === element.selectedAnswer ? "quizzical--selected__option" : ""}`}
             onClick={() => selectAnswer(element.question, answer)}
-            id={[element.question, answer]} key={[questionIndex, answerIndex]}>
-            {answer}</button>
+            id={[element.question, answer]} 
+            key={[questionIndex, answerIndex]}
+            dangerouslySetInnerHTML={{ __html: answer }}>
+            </button>
         ))}
       </div>
     )
   })
   function selectAnswer(question, answer) {
-    if(submitted) {return}
+    if (submitted) { return }
     props.setData(prevData => prevData.map(item =>
       item.question === question
         ? { ...item, selectedAnswer: answer }
@@ -28,10 +30,13 @@ export const Question = (props) => {
   }
   function submitAnswers() {
     setSubmitted(true);
-    props.data.map(element => {
-      document.getElementById([element.question, element.correctAnswer]).classList.add("correct")
+    props.data.forEach(element => {
+      document.getElementById([element.question, element.correctAnswer]).classList.add("quizzical--correct__blank__option")
+      if (element.selectedAnswer && element.selectedAnswer === element.correctAnswer) {
+        document.getElementById([element.question, element.selectedAnswer]).classList.add("quizzical--correct__option")
+      }
       if (element.selectedAnswer && element.selectedAnswer !== element.correctAnswer) {
-        document.getElementById([element.question, element.selectedAnswer]).classList.add("incorrect")
+        document.getElementById([element.question, element.selectedAnswer]).classList.add("quizzical--incorrect__option")
       }
 
     });
@@ -40,8 +45,10 @@ export const Question = (props) => {
 
   return (
     <div>{questions}
-     {!submitted && <button id="submitButton" onClick={submitAnswers} className='submit--button answer--button' >Submit</button>}
-      {submitted && <button id="restartButton" onClick = {()=>props.setQuizStarted(false)}   className='submit--button answer--button'>Restart</button>}
+      {!submitted && <button id="submitButton" onClick={submitAnswers}
+        className='quizzical--submit__button quizzical--answer__button' >Submit</button>}
+      {submitted && <button id="restartButton" onClick={() => props.setQuizStarted(false)}
+        className='quizzical--submit__button quizzical--answer__button'>Play Again!</button>}
     </div>
 
   )
